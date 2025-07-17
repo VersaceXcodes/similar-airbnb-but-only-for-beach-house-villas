@@ -1,0 +1,21 @@
+{
+  "timestamp": 1752766016786,
+  "operation": {
+    "id": "settings:config:package"
+  },
+  "projectId": "similar-airbnb-but-only-for-beach-house-villas",
+  "files": [
+    {
+      "path": "../../apps/similar-airbnb-but-only-for-beach-house-villas/backend/package.json",
+      "type": "text",
+      "size": 1480,
+      "dependencies": true
+    },
+    {
+      "path": "../../apps/similar-airbnb-but-only-for-beach-house-villas/backend/.env",
+      "type": "text",
+      "size": 484,
+      "dependencies": false
+    }
+  ]
+}

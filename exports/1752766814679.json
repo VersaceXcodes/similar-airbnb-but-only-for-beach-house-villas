@@ -1,0 +1,19 @@
+{
+  "timestamp": 1752766814679,
+  "operation": {
+    "id": "webapp:react:store",
+    "refs": {
+      "id": "redux",
+      "version": "1752766726859"
+    }
+  },
+  "projectId": "similar-airbnb-but-only-for-beach-house-villas",
+  "files": [
+    {
+      "path": "../../apps/similar-airbnb-but-only-for-beach-house-villas/vitereact/src/store/main.tsx",
+      "type": "text",
+      "size": 10329,
+      "dependencies": false
+    }
+  ]
+}

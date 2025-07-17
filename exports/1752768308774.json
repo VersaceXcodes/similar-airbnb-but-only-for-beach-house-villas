@@ -1,0 +1,19 @@
+{
+  "timestamp": 1752768308774,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_Host_Earnings",
+      "version": "1752766883462"
+    }
+  },
+  "projectId": "similar-airbnb-but-only-for-beach-house-villas",
+  "files": [
+    {
+      "path": "../../apps/similar-airbnb-but-only-for-beach-house-villas/vitereact/src/components/views/UV_Host_Earnings.tsx",
+      "type": "text",
+      "size": 18252,
+      "dependencies": false
+    }
+  ]
+}

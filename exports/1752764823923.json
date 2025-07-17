@@ -1,0 +1,15 @@
+{
+  "timestamp": 1752764823923,
+  "operation": {
+    "id": "backend:specifications:openapi"
+  },
+  "projectId": "similar-airbnb-but-only-for-beach-house-villas",
+  "files": [
+    {
+      "path": "../../apps/similar-airbnb-but-only-for-beach-house-villas/backend/openapi.yaml",
+      "type": "text",
+      "size": 47713,
+      "dependencies": false
+    }
+  ]
+}

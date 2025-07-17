@@ -1,0 +1,19 @@
+{
+  "timestamp": 1752768849607,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_Error",
+      "version": "1752766883570"
+    }
+  },
+  "projectId": "similar-airbnb-but-only-for-beach-house-villas",
+  "files": [
+    {
+      "path": "../../apps/similar-airbnb-but-only-for-beach-house-villas/vitereact/src/components/views/UV_Error.tsx",
+      "type": "text",
+      "size": 5558,
+      "dependencies": false
+    }
+  ]
+}

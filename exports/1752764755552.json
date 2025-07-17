@@ -1,0 +1,15 @@
+{
+  "timestamp": 1752764755552,
+  "operation": {
+    "id": "db:postgres"
+  },
+  "projectId": "similar-airbnb-but-only-for-beach-house-villas",
+  "files": [
+    {
+      "path": "../../apps/similar-airbnb-but-only-for-beach-house-villas/backend/db.sql",
+      "type": "text",
+      "size": 19999,
+      "dependencies": false
+    }
+  ]
+}

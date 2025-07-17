@@ -1,0 +1,685 @@
+asyncapi: 2.0.0
+info:
+  title: BeachVillas Realtime Events API
+  version: 1.0.0
+  description: >
+    AsyncAPI spec for BeachVillas MVP. Defines the websocket realtime events for
+    UI state, notification, messaging,
+
+    bookings, listing changes, status updates, admin moderation, and dashboards.
+    All events use snake_case.
+servers:
+  beachvillas_ws:
+    url: http://localhost:3000
+    protocol: ws
+    description: Development WebSocket server for BeachVillas
+defaultContentType: application/json
+channels:
+  user.session_updated:
+    description: User's session state has changed (login, logout, session expired,
+      token renewed, profile update).
+    subscribe:
+      operationId: onUserSessionUpdated
+      summary: Realtime updates for user's auth/session/profile state
+      message:
+        name: UserSessionUpdated
+        payload:
+          $ref: "#/components/schemas/UserSessionUpdate"
+  user.notifications:
+    description: Sends a list or delta of notifications for the logged-in user (new,
+      read/unread change, removal).
+    subscribe:
+      operationId: onUserNotifications
+      summary: In-app notifications update feed
+      message:
+        name: Notifications
+        payload:
+          $ref: "#/components/schemas/NotificationsPayload"
+  user.notification_new:
+    description: Emitted when a new in-app notification is delivered to the user;
+      for unread count and toaster.
+    subscribe:
+      operationId: onUserNotificationNew
+      summary: New notification for user (toaster/inbox)
+      message:
+        name: NotificationNew
+        payload:
+          $ref: "#/components/schemas/Notification"
+  user.notification_read:
+    description: Emitted when user marks a notification as read (for badge sync
+      across devices/tabs).
+    subscribe:
+      operationId: onUserNotificationRead
+      summary: Notification read state changed
+      message:
+        name: NotificationRead
+        payload:
+          type: object
+          properties:
+            notification_id:
+              type: string
+            is_read:
+              type: boolean
+  user.threads_updated:
+    description: Inbox thread list changed (new thread, thread deleted, last message
+      updated, unread count change).
+    subscribe:
+      operationId: onUserThreadsUpdated
+      summary: Realtime update for user message thread listing
+      message:
+        name: ThreadsUpdated
+        payload:
+          $ref: "#/components/schemas/ThreadsPayload"
+  thread.message_new:
+    description: New message in a specific message thread (host <-> guest), for chat
+      thread live update.
+    parameters:
+      thread_id:
+        description: The ID of the thread
+        schema:
+          type: string
+    subscribe:
+      operationId: onThreadMessageNew
+      summary: New message received in a chat thread
+      message:
+        name: ThreadMessageNew
+        payload:
+          $ref: "#/components/schemas/Message"
+  thread.message_read:
+    description: Emitted when a message is marked as read (message receipts).
+    parameters:
+      thread_id:
+        description: The ID of the thread
+        schema:
+          type: string
+    subscribe:
+      operationId: onThreadMessageRead
+      summary: A message in this thread was marked as read
+      message:
+        name: MessageRead
+        payload:
+          type: object
+          properties:
+            message_id:
+              type: string
+            is_read:
+              type: boolean
+            read_at:
+              type: number
+  thread.thread_deleted:
+    description: Thread deleted (for removal from inbox/dash UI).
+    parameters:
+      thread_id:
+        description: The ID of the thread
+        schema:
+          type: string
+    subscribe:
+      operationId: onThreadDeleted
+      summary: Notify of message thread deletion
+      message:
+        name: ThreadDeleted
+        payload:
+          type: object
+          properties:
+            thread_id:
+              type: string
+  booking.status_updated:
+    description: Status or details for a booking have changed (pending, confirmed,
+      cancelled, rejected, paid, etc).
+    parameters:
+      booking_id:
+        description: The ID of the booking
+        schema:
+          type: string
+    subscribe:
+      operationId: onBookingStatusUpdated
+      summary: Booking's status or details changed
+      message:
+        name: BookingStatusUpdated
+        payload:
+          $ref: "#/components/schemas/BookingStatusPayload"
+  booking.created:
+    description: New booking was created (initiated by guest on villa).
+    subscribe:
+      operationId: onBookingCreated
+      summary: New booking created (user/host dash feed, inbox thread, etc)
+      message:
+        name: BookingCreated
+        payload:
+          $ref: "#/components/schemas/Booking"
+  booking.cancelled:
+    description: Booking cancelled by guest, host, or admin.
+    parameters:
+      booking_id:
+        description: The ID of the booking
+        schema:
+          type: string
+    subscribe:
+      operationId: onBookingCancelled
+      summary: Booking is cancelled (guest/host dashboards, thread, notification)
+      message:
+        name: BookingCancelled
+        payload:
+          $ref: "#/components/schemas/BookingCancelledPayload"
+  booking.payment_status_updated:
+    description: Payment status for a booking changed (mocked), for frontend to
+      update progress and dashboards.
+    parameters:
+      booking_id:
+        description: The ID of the booking
+        schema:
+          type: string
+    subscribe:
+      operationId: onBookingPaymentStatusUpdated
+      summary: Booking payment status changed
+      message:
+        name: BookingPaymentStatusUpdated
+        payload:
+          $ref: "#/components/schemas/BookingPaymentStatusPayload"
+  villa.updated:
+    description: Villa listing was updated (by host or admin; affects villa detail,
+      search results, dashboards)
+    parameters:
+      villa_id:
+        description: The ID of the villa
+        schema:
+          type: string
+    subscribe:
+      operationId: onVillaUpdated
+      summary: Villa updated (dashboard/search/cards/host/admin)
+      message:
+        name: VillaUpdated
+        payload:
+          $ref: "#/components/schemas/Villa"
+  villa.status_updated:
+    description: Villa listing status changed (active/inactive/pending/approved/removed)
+    parameters:
+      villa_id:
+        description: The ID of the villa
+        schema:
+          type: string
+    subscribe:
+      operationId: onVillaStatusUpdated
+      summary: Listing's status changed (host/admin/marketplace UI)
+      message:
+        name: VillaStatusUpdated
+        payload:
+          type: object
+          properties:
+            villa_id:
+              type: string
+            status:
+              type: string
+              enum:
+                - active
+                - inactive
+                - pending
+                - approved
+                - removed
+  villa.deleted:
+    description: A villa listing has been deleted (by host or admin).
+    parameters:
+      villa_id:
+        description: The ID of the villa
+        schema:
+          type: string
+    subscribe:
+      operationId: onVillaDeleted
+      summary: Villa deleted (dashboard/search/cards)
+      message:
+        name: VillaDeleted
+        payload:
+          type: object
+          properties:
+            villa_id:
+              type: string
+  villa.availability_updated:
+    description: Availability or calendar for a villa was changed (host blocks, date
+      overrides, new booking blocks, etc).
+    parameters:
+      villa_id:
+        description: The ID of the villa
+        schema:
+          type: string
+    subscribe:
+      operationId: onVillaAvailabilityUpdated
+      summary: Villa's calendar/availability (calendar widget, host dash, booking
+        widget)
+      message:
+        name: VillaAvailabilityUpdated
+        payload:
+          $ref: "#/components/schemas/VillaAvailabilityPayload"
+  review.created:
+    description: New review was left (guest→villa or host→guest).
+    parameters:
+      review_id:
+        description: The ID of the review
+        schema:
+          type: string
+    subscribe:
+      operationId: onReviewCreated
+      summary: New review available (villa/booking/reviewer context)
+      message:
+        name: ReviewCreated
+        payload:
+          $ref: "#/components/schemas/Review"
+  review.updated:
+    description: Existing review was updated (text/visibility/rating change, admin edit).
+    parameters:
+      review_id:
+        description: The ID of the review
+        schema:
+          type: string
+    subscribe:
+      operationId: onReviewUpdated
+      summary: Review edited or moderated (UI or admin view must refresh)
+      message:
+        name: ReviewUpdated
+        payload:
+          $ref: "#/components/schemas/Review"
+  review.deleted:
+    description: Review was removed (admin moderation or user-deletion).
+    parameters:
+      review_id:
+        description: The ID of the review
+        schema:
+          type: string
+    subscribe:
+      operationId: onReviewDeleted
+      summary: Review deleted/hidden
+      message:
+        name: ReviewDeleted
+        payload:
+          type: object
+          properties:
+            review_id:
+              type: string
+  admin.action_log:
+    description: Admin performed a moderation or other action relevant to a
+      user/listing/booking/review.
+    subscribe:
+      operationId: onAdminActionLog
+      summary: Admin action entry (for feeds, audit trails in admin dashboard)
+      message:
+        name: AdminActionLog
+        payload:
+          $ref: "#/components/schemas/AdminAction"
+components:
+  schemas:
+    UserSessionUpdate:
+      type: object
+      properties:
+        user_id:
+          type: string
+        name:
+          type: string
+        email:
+          type: string
+        role:
+          type: string
+        profile_photo_url:
+          type: string
+          nullable: true
+        is_active:
+          type: boolean
+        notification_settings:
+          type: object
+          additionalProperties: true
+        payout_method_details:
+          type: string
+          nullable: true
+        is_verified_host:
+          type: boolean
+          nullable: true
+        session:
+          type: object
+          properties:
+            token:
+              type: string
+            expires_at:
+              type: number
+        updated_at:
+          type: number
+    NotificationsPayload:
+      type: object
+      properties:
+        notifications:
+          type: array
+          items:
+            $ref: "#/components/schemas/Notification"
+    Notification:
+      type: object
+      properties:
+        notification_id:
+          type: string
+        type:
+          type: string
+        content:
+          type: string
+        is_read:
+          type: boolean
+        related_booking_id:
+          type: string
+          nullable: true
+        related_villa_id:
+          type: string
+          nullable: true
+        created_at:
+          type: number
+    ThreadsPayload:
+      type: object
+      properties:
+        threads:
+          type: array
+          items:
+            $ref: "#/components/schemas/MessageThread"
+    MessageThread:
+      type: object
+      properties:
+        thread_id:
+          type: string
+        booking_id:
+          type: string
+        villa_id:
+          type: string
+        guest_user_id:
+          type: string
+        host_user_id:
+          type: string
+        last_message:
+          $ref: "#/components/schemas/Message"
+        last_message_at:
+          type: number
+        unread_count:
+          type: number
+        created_at:
+          type: number
+    Message:
+      type: object
+      properties:
+        message_id:
+          type: string
+        thread_id:
+          type: string
+        sender_user_id:
+          type: string
+        receiver_user_id:
+          type: string
+        content:
+          type: string
+        sent_at:
+          type: number
+        is_read:
+          type: boolean
+    Booking:
+      type: object
+      properties:
+        booking_id:
+          type: string
+        guest_user_id:
+          type: string
+        villa_id:
+          type: string
+        host_user_id:
+          type: string
+        check_in:
+          type: string
+        check_out:
+          type: string
+        number_of_guests:
+          type: number
+        status:
+          type: string
+        booking_type:
+          type: string
+        total_price:
+          type: number
+        currency:
+          type: string
+        cleaning_fee:
+          type: number
+        service_fee:
+          type: number
+        security_deposit:
+          type: number
+        payment_status:
+          type: string
+        cancellation_reason:
+          type: string
+          nullable: true
+        special_requests:
+          type: string
+          nullable: true
+        guest_full_name:
+          type: string
+        guest_email:
+          type: string
+        guest_phone:
+          type: string
+        created_at:
+          type: number
+        updated_at:
+          type: number
+        cancelled_at:
+          type: number
+          nullable: true
+        confirmed_at:
+          type: number
+          nullable: true
+    BookingStatusPayload:
+      type: object
+      properties:
+        booking_id:
+          type: string
+        status:
+          type: string
+        previous_status:
+          type: string
+        payment_status:
+          type: string
+        updated_at:
+          type: number
+    BookingCancelledPayload:
+      type: object
+      properties:
+        booking_id:
+          type: string
+        cancelled_at:
+          type: number
+        cancellation_reason:
+          type: string
+    BookingPaymentStatusPayload:
+      type: object
+      properties:
+        booking_id:
+          type: string
+        payment_status:
+          type: string
+        amount_paid:
+          type: number
+        paid_at:
+          type: number
+          nullable: true
+    Villa:
+      type: object
+      properties:
+        villa_id:
+          type: string
+        host_user_id:
+          type: string
+        name:
+          type: string
+        short_description:
+          type: string
+        long_description:
+          type: string
+        address:
+          type: string
+        city:
+          type: string
+        country:
+          type: string
+        latitude:
+          type: string
+        longitude:
+          type: string
+        max_occupancy:
+          type: number
+        is_instant_book:
+          type: boolean
+        status:
+          type: string
+        base_price_per_night:
+          type: number
+        minimum_stay_nights:
+          type: number
+        security_deposit:
+          type: number
+        cleaning_fee:
+          type: number
+        service_fee:
+          type: number
+        created_at:
+          type: number
+        updated_at:
+          type: number
+        admin_notes:
+          type: string
+          nullable: true
+        photos:
+          type: array
+          items:
+            $ref: "#/components/schemas/VillaPhoto"
+        amenities:
+          type: array
+          items:
+            $ref: "#/components/schemas/Amenity"
+        rules:
+          type: array
+          items:
+            $ref: "#/components/schemas/VillaRule"
+    VillaPhoto:
+      type: object
+      properties:
+        photo_id:
+          type: string
+        photo_url:
+          type: string
+        sort_order:
+          type: number
+        uploaded_at:
+          type: number
+        caption:
+          type: string
+          nullable: true
+    Amenity:
+      type: object
+      properties:
+        amenity_id:
+          type: string
+        name:
+          type: string
+        icon_url:
+          type: string
+          nullable: true
+        key:
+          type: string
+    VillaRule:
+      type: object
+      properties:
+        villa_rule_id:
+          type: string
+        rule_type:
+          type: string
+        value:
+          type: string
+        created_at:
+          type: number
+    VillaAvailabilityPayload:
+      type: object
+      properties:
+        villa_id:
+          type: string
+        availability:
+          type: array
+          items:
+            $ref: "#/components/schemas/VillaAvailabilityEntry"
+    VillaAvailabilityEntry:
+      type: object
+      properties:
+        date:
+          type: string
+        is_available:
+          type: boolean
+        price_override:
+          type: number
+          nullable: true
+        minimum_stay_override:
+          type: number
+          nullable: true
+        note:
+          type: string
+          nullable: true
+    Review:
+      type: object
+      properties:
+        review_id:
+          type: string
+        booking_id:
+          type: string
+        villa_id:
+          type: string
+          nullable: true
+        reviewer_user_id:
+          type: string
+        reviewee_user_id:
+          type: string
+          nullable: true
+        rating:
+          type: number
+        review_text:
+          type: string
+        review_type:
+          type: string
+        is_visible:
+          type: boolean
+        is_flagged:
+          type: boolean
+        admin_notes:
+          type: string
+          nullable: true
+        created_at:
+          type: number
+    AdminAction:
+      type: object
+      properties:
+        admin_action_id:
+          type: string
+        admin_user_id:
+          type: string
+        action_type:
+          type: string
+        target_type:
+          type: string
+        target_id:
+          type: string
+        notes:
+          type: string
+          nullable: true
+        created_at:
+          type: number
+tags:
+  - name: User
+    description: User account and session-level events
+  - name: Notifications
+    description: In-app and email notification events
+  - name: Messaging
+    description: Messaging threads and chat events
+  - name: Booking
+    description: Booking status, creation, payment, and cancel
+  - name: Villas
+    description: Villa listing and calendar updates
+  - name: Reviews
+    description: Reviews and moderation updates
+  - name: Admin
+    description: Admin actions and moderation events

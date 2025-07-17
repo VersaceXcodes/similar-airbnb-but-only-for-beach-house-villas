@@ -1,0 +1,19 @@
+{
+  "timestamp": 1752768396461,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_Admin_Login",
+      "version": "latest"
+    }
+  },
+  "projectId": "similar-airbnb-but-only-for-beach-house-villas",
+  "files": [
+    {
+      "path": "../../apps/similar-airbnb-but-only-for-beach-house-villas/vitereact/src/components/views/UV_Admin_Login.tsx",
+      "type": "text",
+      "size": 11220,
+      "dependencies": false
+    }
+  ]
+}

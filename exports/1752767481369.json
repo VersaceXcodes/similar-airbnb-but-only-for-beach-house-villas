@@ -1,0 +1,19 @@
+{
+  "timestamp": 1752767481369,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_ForgotPassword",
+      "version": "1752766883264"
+    }
+  },
+  "projectId": "similar-airbnb-but-only-for-beach-house-villas",
+  "files": [
+    {
+      "path": "../../apps/similar-airbnb-but-only-for-beach-house-villas/vitereact/src/components/views/UV_ForgotPassword.tsx",
+      "type": "text",
+      "size": 6878,
+      "dependencies": false
+    }
+  ]
+}

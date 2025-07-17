@@ -1,0 +1,15 @@
+{
+  "timestamp": 1752764596410,
+  "operation": {
+    "id": "backend:specifications:asyncapi"
+  },
+  "projectId": "similar-airbnb-but-only-for-beach-house-villas",
+  "files": [
+    {
+      "path": "../../apps/similar-airbnb-but-only-for-beach-house-villas/backend/asyncapi.yaml",
+      "type": "text",
+      "size": 18232,
+      "dependencies": false
+    }
+  ]
+}

@@ -1,0 +1,21 @@
+{
+  "timestamp": 1752766171288,
+  "operation": {
+    "id": "backend:tests:main"
+  },
+  "projectId": "similar-airbnb-but-only-for-beach-house-villas",
+  "files": [
+    {
+      "path": "../../apps/similar-airbnb-but-only-for-beach-house-villas/backend/server.test.js",
+      "type": "text",
+      "size": 18473,
+      "dependencies": false
+    },
+    {
+      "path": "../../apps/similar-airbnb-but-only-for-beach-house-villas/backend/jest.config.js",
+      "type": "text",
+      "size": 237,
+      "dependencies": false
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "timestamp": 1752767772252,
+  "operation": {
+    "id": "webapp:react:views",
+    "refs": {
+      "id": "UV_BookingDetails",
+      "version": "1752766883306"
+    }
+  },
+  "projectId": "similar-airbnb-but-only-for-beach-house-villas",
+  "files": [
+    {
+      "path": "../../apps/similar-airbnb-but-only-for-beach-house-villas/vitereact/src/components/views/UV_BookingDetails.tsx",
+      "type": "text",
+      "size": 24420,
+      "dependencies": false
+    }
+  ]
+}
