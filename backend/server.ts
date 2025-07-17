@@ -12,6 +12,20 @@ import bcrypt from 'bcryptjs';
 import { v4 as uuidv4 } from 'uuid';
 import nodemailer from 'nodemailer';
 
+// Extend Express Request interface to include user property
+declare global {
+  namespace Express {
+    interface Request {
+      user?: {
+        user_id: string;
+        role: string;
+        name: string;
+        email: string;
+      };
+    }
+  }
+}
+
 // ESM workaround for __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -23,7 +37,7 @@ const pool = new Pool(
   DATABASE_URL
     ? {
       connectionString: DATABASE_URL,
-      ssl: { require: true }
+      ssl: { rejectUnauthorized: false }
     }
     : {
       host: PGHOST || "ep-ancient-dream-abbsot9k-pooler.eu-west-2.aws.neon.tech",
@@ -31,7 +45,7 @@ const pool = new Pool(
       user: PGUSER || "neondb_owner",
       password: PGPASSWORD || "npg_jAS3aITLC5DX",
       port: Number(PGPORT),
-      ssl: { require: true },
+      ssl: { rejectUnauthorized: false },
     }
 );
 
