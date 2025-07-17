@@ -70,11 +70,8 @@
     "vaul": "^0.9.3",
     "zod": "^3.23.8",
     "zustand": "*",
-    "zustand/middleware": "*",
     "@tanstack/react-query": "*",
     "react-icons": "*",
-    "@schema": "*",
-    "dependencies": "*",
     "dayjs": "*"
   },
   "devDependencies": {

@@ -21,11 +21,11 @@
 		"noUnusedParameters": true,
 		"noFallthroughCasesInSwitch": true,
 
-		"baseUrl": ".",
-		"paths": {
-			"@/*": ["./src/*"]
-		}
-	},
+	"baseUrl": ".",
+	"paths": {
+		"@/*": ["./src/*"],
+		"@schema": ["./src/schema"]
+	}	},
 	"include": ["src"],
 	"exclude": ["src/components/ui/**/*"]
 }
